@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PWA Main App Test</title>
+<link rel="manifest" href="manifest.json">
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  input { font-size: 20px; padding: 8px; width: 90%; }
+  button { font-size: 20px; padding: 10px 15px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<h2>PWA Installation Name Test</h2>
+
+<input id="appname" placeholder="Enter app name…">
+<button onclick="updateManifest()">Update Manifest</button>
+
+<p>After updating, open Samsung Internet → Menu → <b>Add Page to Apps</b> to install as a main app.</p>
+
+<script>
+// --- Update manifest dynamically ---
+function updateManifest() {
+    const name = document.getElementById("appname").value || "DefaultApp";
+    const manifest = {
+        "name": name,
+        "short_name": name,
+        "start_url": "./",
+        "display": "standalone",
+        "icons": [
+            { "src": "icon.png", "sizes": "192x192", "type": "image/png" }
+        ]
+    };
+    fetch('manifest.json', {method:'PUT', body: JSON.stringify(manifest)})
+      .then(() => alert('Manifest updated. Now install via Samsung Internet menu.'))
+      .catch(()=>alert('Dynamic update not supported; use default manifest.'));
+}
+
+// --- Register service worker ---
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log('Service worker registered'))
+    .catch(err => console.warn('Service worker failed', err));
+}
+</script>
+</body>
+</html>
